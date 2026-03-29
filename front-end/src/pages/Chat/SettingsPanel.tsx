@@ -6,7 +6,7 @@ import { STT_LANGUAGES } from "../../constants/stt.constant";
 export interface SettingsPanelProps {
   isLoaded: boolean;
   isRecording: boolean;
-  volumeRef: React.MutableRefObject<number>;
+  volumeRef: React.RefObject<number>;
   onDeviceChange?: (deviceId: string) => void;
   selectedDeviceId?: string;
   // WebSocket props

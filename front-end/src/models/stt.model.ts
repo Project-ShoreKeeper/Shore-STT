@@ -109,14 +109,14 @@ export const DEFAULT_STT_CONFIG: STTConfig = {
     speechThreshold: 0.3,
     exitThreshold: 0.1,
     minSilenceDurationMs: 400,
-    speechPadMs: 80,
+    speechPadMs: 160,
     minSpeechDurationMs: 250,
     maxBufferDuration: 30,
     newBufferSize: 512,
   },
 
   asr: {
-    defaultLanguage: "vi",
+    defaultLanguage: "en",
     autoDetectLanguage: false,
     modelSize: "base",
     enablePunctuation: true,
