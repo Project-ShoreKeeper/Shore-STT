@@ -1,11 +1,15 @@
-import App from "@Shore/App";
+import AppLayout from "@Shore/layouts/AppLayout";
+import PageChat from "@Shore/pages/Chat";
 import PageMain from "@Shore/pages/Main";
 import { Routes, Route } from "react-router-dom";
 
 export default function PublicRoutes() {
   return (
     <Routes>
-      <Route path="/" element={<PageMain />} />
+      <Route element={<AppLayout />}>
+        <Route path="/" element={<PageMain />} />
+        <Route path="/chat" element={<PageChat />} />
+      </Route>
     </Routes>
   );
 }
