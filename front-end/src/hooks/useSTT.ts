@@ -38,9 +38,11 @@ export interface UseSTTReturn {
   // STT results
   transcripts: STTTranscript[];
 
-  // Language config
+  // Language/Model config
   language: string;
   setLanguage: (lang: string) => void;
+  modelSize: string;
+  setModelSize: (size: string) => void;
 
   // Controls
   startRecording: (deviceId?: string) => void;
@@ -64,6 +66,7 @@ export function useSTT(): UseSTTReturn {
   // ── WebSocket State ──
   const [wsStatus, setWsStatus] = useState<WebSocketStatus>("CLOSED");
   const [language, setLanguage] = useState(STT_DEFAULT_LANGUAGE);
+  const [modelSize, setModelSize] = useState<string>("base");
 
   // ── STT Results ──
   const [transcripts, setTranscripts] = useState<STTTranscript[]>([]);
@@ -76,6 +79,7 @@ export function useSTT(): UseSTTReturn {
   const processorRef = useRef<ScriptProcessorNode | null>(null);
   const sourceRef = useRef<MediaStreamAudioSourceNode | null>(null);
   const languageRef = useRef(STT_DEFAULT_LANGUAGE);
+  const modelSizeRef = useRef("base");
 
   // Map để theo dõi pending transcript (audio đã gửi, chờ kết quả)
   const pendingMapRef = useRef<
@@ -85,10 +89,14 @@ export function useSTT(): UseSTTReturn {
   // Đếm thứ tự gửi để map response
   const sendQueueRef = useRef<string[]>([]);
 
-  // Sync language vào ref để callback closure luôn đúng
+  // Sync refs để callback closure luôn đúng
   useEffect(() => {
     languageRef.current = language;
   }, [language]);
+
+  useEffect(() => {
+    modelSizeRef.current = modelSize;
+  }, [modelSize]);
 
   // ── Khởi tạo VAD Model ──
   useEffect(() => {
@@ -172,17 +180,21 @@ export function useSTT(): UseSTTReturn {
       // Gửi config session khi kết nối thành công
       ws.sendConfig({
         language: languageRef.current,
+        model_size: modelSizeRef.current,
         sample_rate: 16000,
       });
     });
 
     ws.on("message", (msg: STTMessageEvent) => {
+      if (msg.type === "status") {
+        setStatusMessage(msg.message || "");
+      }
+
       if (msg.type === "transcript") {
         // Lấy ID pending tiếp theo trong queue
         const pendingId = sendQueueRef.current.shift();
 
         if (pendingId && pendingMapRef.current.has(pendingId)) {
-          const pendingInfo = pendingMapRef.current.get(pendingId)!;
           pendingMapRef.current.delete(pendingId);
 
           // Cập nhật transcript placeholder → kết quả thật
@@ -229,6 +241,7 @@ export function useSTT(): UseSTTReturn {
 
       if (msg.type === "error") {
         console.error("[STT WS] Server error:", msg.message);
+        setStatusMessage(`Error: ${msg.message}`);
       }
     });
 
@@ -245,15 +258,16 @@ export function useSTT(): UseSTTReturn {
     };
   }, []);
 
-  // ── Gửi config update khi language thay đổi ──
+  // ── Gửi config update khi language hoặc model thay đổi ──
   useEffect(() => {
     if (wsRef.current && wsStatus === "OPEN") {
       wsRef.current.sendConfig({
         language,
+        model_size: modelSize,
         sample_rate: 16000,
       });
     }
-  }, [language, wsStatus]);
+  }, [language, modelSize, wsStatus]);
 
   // ── Controls ──
 
@@ -392,9 +406,11 @@ export function useSTT(): UseSTTReturn {
     // STT
     transcripts,
 
-    // Language
+    // Language/Model
     language,
     setLanguage,
+    modelSize,
+    setModelSize,
 
     // Controls
     startRecording,

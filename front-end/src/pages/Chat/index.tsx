@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from "react";
+import React, { useEffect } from "react";
 import {
   Flex,
   Box,
@@ -23,6 +23,8 @@ function PageChat() {
     isConnected,
     language,
     setLanguage,
+    modelSize,
+    setModelSize,
     startRecording,
     stopRecording,
   } = useSTT();
@@ -32,7 +34,6 @@ function PageChat() {
   >(undefined);
 
   // Scroll to bottom on new messages
-  const viewportRef = useRef<HTMLDivElement>(null);
   useEffect(() => {
     const viewport = document.querySelector(".rt-ScrollAreaViewport");
     if (viewport) {
@@ -333,6 +334,8 @@ function PageChat() {
         isConnected={isConnected}
         language={language}
         onLanguageChange={setLanguage}
+        modelSize={modelSize}
+        onModelSizeChange={setModelSize}
       />
     </Flex>
   );

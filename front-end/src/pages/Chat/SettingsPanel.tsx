@@ -1,7 +1,7 @@
 import React, { useEffect, useState, useRef } from "react";
 import { Flex, Box, Text, Select, Separator, Badge } from "@radix-ui/themes";
 import type { WebSocketStatus } from "../../services/websocket.service";
-import { STT_LANGUAGES } from "../../constants/stt.constant";
+import { STT_LANGUAGES, STT_MODELS } from "../../constants/stt.constant";
 
 export interface SettingsPanelProps {
   isLoaded: boolean;
@@ -15,6 +15,9 @@ export interface SettingsPanelProps {
   // Language props
   language: string;
   onLanguageChange?: (lang: string) => void;
+  // Model props
+  modelSize: string;
+  onModelSizeChange?: (size: string) => void;
 }
 
 // Hàm helper hiển thị badge màu cho WebSocket status
@@ -42,9 +45,10 @@ export default function SettingsPanel({
   onDeviceChange,
   selectedDeviceId,
   wsStatus,
-  isConnected,
   language,
   onLanguageChange,
+  modelSize,
+  onModelSizeChange,
 }: SettingsPanelProps) {
   const [devices, setDevices] = useState<MediaDeviceInfo[]>([]);
   const [ramUsage, setRamUsage] = useState<number | null>(null);
@@ -198,6 +202,43 @@ export default function SettingsPanel({
                 {STT_LANGUAGES.map((lang) => (
                   <Select.Item key={lang.value} value={lang.value}>
                     {lang.label}
+                  </Select.Item>
+                ))}
+              </Select.Group>
+            </Select.Content>
+          </Select.Root>
+        </Flex>
+
+        {/* Model Selector */}
+        <Flex justify="between" align="center" mt="2">
+          <Text size="2" color="gray">
+            Model
+          </Text>
+          <Select.Root
+            value={modelSize}
+            onValueChange={onModelSizeChange}
+            size="1"
+          >
+            <Select.Trigger
+              variant="soft"
+              style={{
+                backgroundColor: "var(--gray-3)",
+                color: "var(--gray-12)",
+                border: "none",
+                maxWidth: "120px",
+              }}
+            />
+            <Select.Content
+              position="popper"
+              style={{
+                backgroundColor: "var(--color-panel-solid)",
+                color: "var(--gray-12)",
+              }}
+            >
+              <Select.Group>
+                {STT_MODELS.map((m) => (
+                  <Select.Item key={m.value} value={m.value}>
+                    {m.label}
                   </Select.Item>
                 ))}
               </Select.Group>

@@ -79,8 +79,20 @@ async def websocket_audio(websocket: WebSocket):
                     msg_type = data.get("type", "")
 
                     if msg_type == "config":
-                        # Frontend gửi cấu hình session (ngôn ngữ, sample rate, ...)
-                        session_config.update(data.get("data", {}))
+                        # Frontend gửi cấu hình session (ngôn ngữ, sample rate, model_size, ...)
+                        config_data = data.get("data", {})
+                        
+                        # Xử lý đổi model nếu có yêu cầu
+                        requested_model = config_data.get("model_size")
+                        if requested_model:
+                            print(f"[WS] Yêu cầu chuyển model sang: {requested_model}")
+                            await websocket.send_json({
+                                "type": "status",
+                                "message": f"Switching model to {requested_model}..."
+                            })
+                            stt_service.load_model(requested_model)
+
+                        session_config.update(config_data)
                         print(f"[WS] Cập nhật config: {session_config}")
                         await websocket.send_json({
                             "type": "status",

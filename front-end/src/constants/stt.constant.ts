@@ -15,3 +15,15 @@ export const STT_LANGUAGES = [
   { value: "vi", label: "Tiếng Việt" },
   { value: "auto", label: "Auto Detect" },
 ] as const;
+// Danh sách model hỗ trợ (Faster-Whisper)
+export const STT_MODELS = [
+  { value: "tiny", label: "Tiny (Very Fast)" },
+  { value: "base", label: "Base (Balanced)" },
+  { value: "small", label: "Small" },
+  { value: "medium", label: "Medium" },
+  {
+    value: "large-v3-turbo",
+    label: "Large V3 Turbo",
+  },
+  { value: "large-v3", label: "Large V3 (Most Accurate)" },
+] as const;

@@ -106,10 +106,10 @@ export const DEFAULT_STT_CONFIG: STTConfig = {
 
   vad: {
     sampleRate: 16000,
-    speechThreshold: 0.3,
+    speechThreshold: 0.2,
     exitThreshold: 0.1,
-    minSilenceDurationMs: 400,
-    speechPadMs: 160,
+    minSilenceDurationMs: 500,
+    speechPadMs: 400,
     minSpeechDurationMs: 250,
     maxBufferDuration: 30,
     newBufferSize: 512,
@@ -118,7 +118,7 @@ export const DEFAULT_STT_CONFIG: STTConfig = {
   asr: {
     defaultLanguage: "en",
     autoDetectLanguage: false,
-    modelSize: "base",
+    modelSize: "large-v3-turbo",
     enablePunctuation: true,
     beamSize: 5,
     temperature: 0.0,
